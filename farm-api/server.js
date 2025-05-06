@@ -86,18 +86,7 @@ app.post("/assign-task", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-// Clear the Tasks table on every server restart
-async function clearTasksTable() {
-  try {
-    await db.query("DELETE FROM Tasks");
-    await db.query("ALTER TABLE Tasks AUTO_INCREMENT = 1"); // sets the auto-increment back to 1 after each commit
-    console.log("✅ Tasks table cleared on deployment.");
-  } catch (err) {
-    console.error("❌ Failed to clear Tasks table:", err.message);
-  }
-}
-// login page
+// Login page
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -120,6 +109,18 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+// Clear the Tasks table on every server restart
+async function clearTasksTable() {
+  try {
+    await db.query("DELETE FROM Tasks");
+    await db.query("ALTER TABLE Tasks AUTO_INCREMENT = 1"); // sets the auto-increment back to 1 after each commit
+    console.log("✅ Tasks table cleared on deployment.");
+  } catch (err) {
+    console.error("❌ Failed to clear Tasks table:", err.message);
+  }
+}
 
 // clears the data in the tasks table every time we commit changes
 clearTasksTable();
