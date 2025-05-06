@@ -1,5 +1,4 @@
 // changed type to "modeule" in package.json, so we need to use "import" instead of require()
-import bcrypt from "bcrypt"; // npm install bcrypt
 import express from "express";
 import cors from "cors";
 import { db } from "./db.js";
@@ -98,9 +97,8 @@ app.post("/login", async (req, res) => {
     }
 
     const user = rows[0];
-    const match = await bcrypt.compare(password, user.password_hash);
 
-    if (!match) {
+    if (password !== user.password) {
       return res.status(401).json({ success: false, message: "Invalid password" });
     }
 
@@ -109,6 +107,7 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 // Clear the Tasks table on every server restart
