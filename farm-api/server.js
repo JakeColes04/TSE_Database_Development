@@ -1,4 +1,5 @@
 // changed type to "modeule" in package.json, so we need to use "import" instead of require()
+npm uninstall bcrypt
 import express from "express";
 import cors from "cors";
 import { db } from "./db.js";
