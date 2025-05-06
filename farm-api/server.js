@@ -1,4 +1,5 @@
 // changed type to "modeule" in package.json, so we need to use "import" instead of require()
+import bcrypt from "bcrypt"; // npm install bcrypt
 import express from "express";
 import cors from "cors";
 import { db } from "./db.js";
@@ -96,6 +97,29 @@ async function clearTasksTable() {
     console.error("❌ Failed to clear Tasks table:", err.message);
   }
 }
+// login page
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const [rows] = await db.query("SELECT * FROM accounts WHERE username = ?", [username]);
+
+    if (rows.length === 0) {
+      return res.status(401).json({ success: false, message: "User not found" });
+    }
+
+    const user = rows[0];
+    const match = await bcrypt.compare(password, user.password_hash);
+
+    if (!match) {
+      return res.status(401).json({ success: false, message: "Invalid password" });
+    }
+
+    res.json({ success: true, account_id: user.account_id, account_type: user.account_type });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // clears the data in the tasks table every time we commit changes
 clearTasksTable();
